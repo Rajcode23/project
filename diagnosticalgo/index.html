@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Diagnostik Pembelajaran</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-align: center;
+        }
+
+        h2 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-section {
+            display: block;
+        }
+
+        .result-section {
+            display: none;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .weakness-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .weakness-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .weakness-input input {
+            flex: 1;
+        }
+
+        .btn-remove {
+            padding: 12px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .btn-remove:hover {
+            background: #dc2626;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #718096;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4a5568;
+        }
+
+        .btn-add {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #059669;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .student-info {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+        }
+
+        .info-label {
+            font-size: 0.9em;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 1.1em;
+            color: #2d3748;
+            font-weight: 600;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .weakness-section,
+        .goals-section {
+            background: #fef5f7;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        .weakness-section h3,
+        .goals-section h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .weakness-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .weakness-icon {
+            color: #ef4444;
+            font-size: 1.2em;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .weakness-text {
+            color: #4a5568;
+            line-height: 1.6;
+            text-decoration: underline;
+            text-decoration-color: #ef4444;
+            text-decoration-thickness: 2px;
+            text-underline-offset: 3px;
+        }
+
+        .goal-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #ede9fe;
+            border-radius: 8px;
+        }
+
+        .goal-number {
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .goal-text {
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .recommendations {
+            margin-top: 40px;
+        }
+
+        .recommendations h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .check-icon {
+            background: rgba(255,255,255,0.3);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+
+        .recommendation-text {
+            font-size: 1.05em;
+            line-height: 1.5;
+        }
+
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        .goals-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .goal-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .goal-input input {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- FORM SECTION -->
+        <div class="form-section" id="formSection">
+            <h1>📚 Sistem Diagnostik Pembelajaran</h1>
+            
+            <form id="diagnosticForm">
+                <h2>Informasi Siswa</h2>
+                
+                <div class="form-group">
+                    <label>Nama Siswa</label>
+                    <input type="text" id="studentName" required placeholder="Masukkan nama siswa">
+                </div>
+
+                <div class="form-group">
+                    <label>Usia</label>
+                    <input type="number" id="studentAge" required placeholder="Masukkan usia siswa" min="3" max="20">
+                </div>
+
+                <div class="form-group">
+                    <label>Kursus/Mata Pelajaran</label>
+                    <input type="text" id="courseName" required placeholder="Contoh: Matematika, Bahasa Inggris, dll">
+                </div>
+
+                <h2 style="margin-top: 40px;">Bagian yang Masih Lemah</h2>
+                
+                <div class="weakness-inputs" id="weaknessInputs">
+                    <div class="weakness-input">
+                        <input type="text" placeholder="Contoh: Dasar belum kuat" required>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-add" onclick="addWeaknessInput()">+ Tambah Kelemahan</button>
+
+                <h2 style="margin-top: 40px;">Tujuan Utama</h2>
+                
+                <div class="goals-inputs" id="goalsInputs">
+                    <div class="goal-input">
+                        <input type="text" placeholder="Contoh: Mengejar ketertinggalan dari kurikulum" required>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-add" onclick="addGoalInput()">+ Tambah Tujuan</button>
+
+                <h2 style="margin-top: 40px;">Pilihan Kelas</h2>
+                
+                <div class="form-group">
+                    <label>Tipe Kelas</label>
+                    <select id="classType" required>
+                        <option value="">Pilih tipe kelas</option>
+                        <option value="Private">Private</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Group">Group</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Paket Pelajaran</label>
+                    <select id="lessonPackage" required>
+                        <option value="">Pilih paket pelajaran</option>
+                        <option value="40">40 Pertemuan</option>
+                        <option value="80">80 Pertemuan</option>
+                        <option value="120">120 Pertemuan</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Frekuensi per Minggu</label>
+                    <select id="frequency" required>
+                        <option value="">Pilih frekuensi</option>
+                        <option value="1">1 kali per minggu</option>
+                        <option value="2">2 kali per minggu</option>
+                        <option value="3">3 kali per minggu</option>
+                        <option value="4">4 kali per minggu</option>
+                        <option value="5">5 kali per minggu</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Generate Hasil Diagnostik</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- RESULT SECTION -->
+        <div class="result-section" id="resultSection">
+            <div class="result-header">
+                <h1>Hasil diagnostik</h1>
+            </div>
+
+            <div class="student-info">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nama Siswa</div>
+                        <div class="info-value" id="displayName"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Usia</div>
+                        <div class="info-value" id="displayAge"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Kursus</div>
+                        <div class="info-value" id="displayCourse"></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Tipe Kelas</div>
+                        <div class="info-value" id="displayClassType"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="weakness-section">
+                    <h3>Bagian yang masih lemah:</h3>
+                    <div id="weaknessList"></div>
+                </div>
+
+                <div class="goals-section">
+                    <h3>Tujuan utama:</h3>
+                    <div id="goalsList"></div>
+                </div>
+            </div>
+
+            <div class="recommendations">
+                <h3>Rekomendasi kami:</h3>
+                <div class="recommendation-grid" id="recommendationsList"></div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="printResult()">🖨️ Cetak Hasil</button>
+                <button class="btn btn-primary" onclick="resetForm()">🔄 Input Data Baru</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const formData = {
+            weaknesses: [],
+            goals: []
+        };
+
+        function addWeaknessInput() {
+            const container = document.getElementById('weaknessInputs');
+            const div = document.createElement('div');
+            div.className = 'weakness-input';
+            div.innerHTML = `
+                <input type="text" placeholder="Masukkan kelemahan">
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addGoalInput() {
+            const container = document.getElementById('goalsInputs');
+            const div = document.createElement('div');
+            div.className = 'goal-input';
+            div.innerHTML = `
+                <input type="text" placeholder="Masukkan tujuan">
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove()">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        document.getElementById('diagnosticForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            formData.studentName = document.getElementById('studentName').value;
+            formData.studentAge = document.getElementById('studentAge').value;
+            formData.courseName = document.getElementById('courseName').value;
+            formData.classType = document.getElementById('classType').value;
+            formData.lessonPackage = document.getElementById('lessonPackage').value;
+            formData.frequency = document.getElementById('frequency').value;
+            
+            formData.weaknesses = [];
+            document.querySelectorAll('.weakness-input input').forEach(input => {
+                if (input.value.trim()) {
+                    formData.weaknesses.push(input.value.trim());
+                }
+            });
+            
+            formData.goals = [];
+            document.querySelectorAll('.goal-input input').forEach(input => {
+                if (input.value.trim()) {
+                    formData.goals.push(input.value.trim());
+                }
+            });
+            
+            if (formData.weaknesses.length === 0) {
+                alert('Mohon masukkan minimal satu kelemahan!');
+                return;
+            }
+            
+            if (formData.goals.length === 0) {
+                alert('Mohon masukkan minimal satu tujuan!');
+                return;
+            }
+            
+            displayResults();
+        });
+
+        function displayResults() {
+            document.getElementById('displayName').textContent = formData.studentName;
+            document.getElementById('displayAge').textContent = formData.studentAge + ' tahun';
+            document.getElementById('displayCourse').textContent = formData.courseName;
+            document.getElementById('displayClassType').textContent = formData.classType;
+            
+            const weaknessList = document.getElementById('weaknessList');
+            weaknessList.innerHTML = '';
+            formData.weaknesses.forEach(weakness => {
+                const div = document.createElement('div');
+                div.className = 'weakness-item';
+                div.innerHTML = `
+                    <span class="weakness-icon">✕</span>
+                    <span class="weakness-text">${weakness}</span>
+                `;
+                weaknessList.appendChild(div);
+            });
+            
+            const goalsList = document.getElementById('goalsList');
+            goalsList.innerHTML = '';
+            formData.goals.forEach((goal, index) => {
+                const div = document.createElement('div');
+                div.className = 'goal-item';
+                div.innerHTML = `
+                    <span class="goal-number">${index + 1}</span>
+                    <span class="goal-text">${goal}</span>
+                `;
+                goalsList.appendChild(div);
+            });
+            
+            const recommendationsList = document.getElementById('recommendationsList');
+            recommendationsList.innerHTML = '';
+            
+            const recommendations = [
+                'Rencana belajar pribadi',
+                'Sesi rutin dan terstruktur',
+                `${formData.lessonPackage}+ pertemuan`,
+                `Frekuensi: ${formData.frequency} kali per minggu`
+            ];
+            
+            recommendations.forEach(rec => {
+                const div = document.createElement('div');
+                div.className = 'recommendation-card';
+                div.innerHTML = `
+                    <div class="check-icon">✓</div>
+                    <div class="recommendation-text">${rec}</div>
+                `;
+                recommendationsList.appendChild(div);
+            });
+            
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById('diagnosticForm').reset();
+            document.getElementById('formSection').style.display = 'block';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            document.getElementById('weaknessInputs').innerHTML = `
+                <div class="weakness-input">
+                    <input type="text" placeholder="Contoh: Dasar belum kuat" required>
+                </div>
+            `;
+            
+            document.getElementById('goalsInputs').innerHTML = `
+                <div class="goal-input">
+                    <input type="text" placeholder="Contoh: Mengejar ketertinggalan dari kurikulum" required>
+                </div>
+            `;
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function printResult() {
+            window.print();
+        }
+    </script>
+</body>
+</html>
